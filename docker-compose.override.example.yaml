@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+  test-producer:
+    restart: on-failure
+    environment:
+      IBM_HOST: "ibmmq-server"
+      IBM_PORT: "1414"
+      QUEUE_MANAGER: "QM1"
+      QUEUE: "DEV.QUEUE.1"
+      CHANNEL: "DEV.ADMIN.SVRCONN"
+      IBM_LOGIN: "admin"
+      IBM_PASSWORD: "passw0rd"
+    depends_on:
+      - rabbitmq
+      - ibmmq
+    build:
+      context: tools/producer
+      dockerfile: Dockerfile

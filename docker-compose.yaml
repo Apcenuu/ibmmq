@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+  ibmmq:
+    image: icr.io/ibm-messaging/mq:9.3.0.0-r1-amd64
+    environment:
+      LICENSE: accept
+      MQ_QMGR_NAME: QM1
+    restart: always
+    ports:
+      - "1414:1414"
+
+  rabbitmq:
+    image: rabbitmq:management
+    restart: always
+    ports:
+      - "15672:15672"
+
+  producer:
+    build:
+      context: ibmProducer
+      dockerfile: Dockerfile
+    env_file:
+      - ./.env.worker
+    depends_on:
+      - rabbitmq
+      - ibmmq
+
+  consumer:
+    build:
+      context: ibmConsumer
+      dockerfile: Dockerfile
+    env_file:
+      - ./.env.worker
+    depends_on:
+      - rabbitmq
+      - ibmmq
